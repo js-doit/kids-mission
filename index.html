@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>미션 대시보드</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, 'Pretendard', sans-serif;
+  background: #f5f5f7;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+/* 자녀 선택 화면 */
+.screen { display: none; }
+.screen.active { display: block; }
+
+#select-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 20px;
+}
+#select-screen h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.child-btn {
+  width: 200px;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  background: #1a1a2e;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.child-btn:active { transform: scale(0.96); }
+
+/* 미션 화면 */
+#mission-screen {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.header h2 { font-size: 20px; }
+.header .date { color: #888; font-size: 14px; }
+.back-btn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #666;
+}
+
+/* 완료율 */
+.progress {
+  background: #e8e8ed;
+  border-radius: 12px;
+  height: 8px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: #f0a030;
+  border-radius: 12px;
+  transition: width 0.3s;
+}
+.progress-text {
+  text-align: center;
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+/* 미션 목록 */
+.mission-list { list-style: none; margin-bottom: 32px; }
+.mission-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.mission-item.done { background: #f0f8f0; }
+.mission-item .check {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.mission-item.done .check {
+  background: #4caf50;
+  border-color: #4caf50;
+  color: #fff;
+}
+.mission-item .title { font-size: 16px; }
+.mission-item.done .title {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+/* 최근 7일 */
+.history h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.history-table th, .history-table td {
+  padding: 10px 6px;
+  text-align: center;
+}
+.history-table th {
+  background: #1a1a2e;
+  color: #fff;
+  font-weight: 500;
+}
+.history-table tr:not(:last-child) td {
+  border-bottom: 1px solid #f0f0f0;
+}
+.history-table .done-mark { color: #4caf50; font-weight: 700; }
+.history-table .miss-mark { color: #ddd; }
+</style>
+</head>
+<body>
+
+<!-- 자녀 선택 -->
+<div id="select-screen" class="screen active">
+  <h1>누구의 미션?</h1>
+  <button class="child-btn" onclick="selectChild('child1')">Mark</button>
+  <button class="child-btn" onclick="selectChild('child2')">Chloe</button>
+</div>
+
+<!-- 미션 화면 -->
+<div id="mission-screen" class="screen">
+  <div class="header">
+    <div>
+      <h2 id="child-name"></h2>
+      <div class="date" id="today-date"></div>
+    </div>
+    <button class="back-btn" onclick="goBack()">변경</button>
+  </div>
+  <div class="progress-text" id="progress-text"></div>
+  <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+  <ul class="mission-list" id="mission-list"></ul>
+  <div class="history">
+    <h3>최근 7일</h3>
+    <table class="history-table" id="history-table"></table>
+  </div>
+</div>
+
+<script>
+// ===== 미션 정의 (수정은 여기서) =====
+const MISSIONS = [
+  { id: 'math', title: '수학 문제 풀기' },
+  { id: 'read', title: '독서 30분' },
+];
+
+const CHILDREN = {
+  child1: 'Mark',
+  child2: 'Chloe',
+};
+// =====================================
+
+let currentChild = null;
+
+function getToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
+function getDateLabel(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return (d.getMonth() + 1) + '/' + d.getDate();
+}
+
+function storageKey(child, date) {
+  return 'missions_' + child + '_' + date;
+}
+
+function loadChecked(child, date) {
+  const raw = localStorage.getItem(storageKey(child, date));
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveChecked(child, date, checked) {
+  localStorage.setItem(storageKey(child, date), JSON.stringify(checked));
+}
+
+function selectChild(child) {
+  currentChild = child;
+  localStorage.setItem('lastChild', child);
+  showMissionScreen();
+}
+
+function goBack() {
+  currentChild = null;
+  localStorage.removeItem('lastChild');
+  document.getElementById('select-screen').classList.add('active');
+  document.getElementById('mission-screen').classList.remove('active');
+}
+
+function showMissionScreen() {
+  document.getElementById('select-screen').classList.remove('active');
+  document.getElementById('mission-screen').classList.add('active');
+  document.getElementById('child-name').textContent = CHILDREN[currentChild] + '의 미션';
+  document.getElementById('today-date').textContent = getToday();
+  renderMissions();
+  renderHistory();
+}
+
+function renderMissions() {
+  const today = getToday();
+  const checked = loadChecked(currentChild, today);
+  const list = document.getElementById('mission-list');
+  list.innerHTML = '';
+
+  MISSIONS.forEach(function(m) {
+    const li = document.createElement('li');
+    li.className = 'mission-item' + (checked[m.id] ? ' done' : '');
+    li.innerHTML = '<div class="check">' + (checked[m.id] ? '&#10003;' : '') + '</div>' +
+      '<span class="title">' + m.title + '</span>';
+    li.onclick = function() {
+      checked[m.id] = !checked[m.id];
+      saveChecked(currentChild, today, checked);
+      renderMissions();
+      renderHistory();
+    };
+    list.appendChild(li);
+  });
+
+  const doneCount = MISSIONS.filter(function(m) { return checked[m.id]; }).length;
+  const total = MISSIONS.length;
+  document.getElementById('progress-text').textContent = doneCount + ' / ' + total + ' 완료';
+  document.getElementById('progress-bar').style.width = (total > 0 ? (doneCount / total * 100) : 0) + '%';
+}
+
+function renderHistory() {
+  const table = document.getElementById('history-table');
+  const today = new Date();
+  const dates = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
+    dates.push(ds);
+  }
+
+  let html = '<thead><tr><th></th>';
+  dates.forEach(function(ds) { html += '<th>' + getDateLabel(ds) + '</th>'; });
+  html += '</tr></thead><tbody>';
+
+  MISSIONS.forEach(function(m) {
+    html += '<tr><td style="text-align:left;padding-left:12px;">' + m.title + '</td>';
+    dates.forEach(function(ds) {
+      const checked = loadChecked(currentChild, ds);
+      html += '<td class="' + (checked[m.id] ? 'done-mark' : 'miss-mark') + '">' +
+        (checked[m.id] ? '●' : '○') + '</td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// 초기화: 마지막 선택 자녀 복원
+(function() {
+  const last = localStorage.getItem('lastChild');
+  if (last && CHILDREN[last]) {
+    selectChild(last);
+  }
+})();
+</script>
+</body>
+</html>
