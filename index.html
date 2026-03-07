@@ -8,102 +8,264 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: -apple-system, 'Pretendard', sans-serif;
-  background: #f5f5f7;
-  color: #1a1a2e;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* 자녀 선택 화면 */
 .screen { display: none; }
-.screen.active { display: block; }
+.screen.active { display: flex; }
 
+/* ===== 선택 화면 ===== */
 #select-screen {
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  gap: 20px;
+  background: #2c2c3a;
+  gap: 16px;
 }
 #select-screen h1 {
-  font-size: 24px;
+  font-size: 22px;
+  color: rgba(255,255,255,0.85);
   margin-bottom: 20px;
+  font-weight: 500;
 }
 .child-btn {
-  width: 200px;
+  width: 220px;
   padding: 20px;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
   border: none;
   border-radius: 16px;
-  background: #1a1a2e;
-  color: #fff;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: all 0.15s;
+  color: #fff;
+  position: relative;
 }
-.child-btn:active { transform: scale(0.96); }
+.child-btn:active { transform: scale(0.97); }
+.child-btn.mark {
+  background: #4a7fc4;
+}
+.child-btn.mark::after {
+  content: '🚀';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+}
+.child-btn.chloe {
+  background: #b07aab;
+}
+.child-btn.chloe::after {
+  content: '🌸';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+}
 
-/* 미션 화면 */
+/* ===== 미션 화면 ===== */
 #mission-screen {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 20px 16px;
+  flex-direction: column;
+  min-height: 100vh;
 }
-.header {
+
+/* Mark 테마: 우주 파스텔 */
+#mission-screen.theme-mark { background: #1e2a3a; color: #d0dae8; }
+#mission-screen.theme-mark .mission-header {
+  background: linear-gradient(135deg, #2a3f5f, #34506e);
+  position: relative;
+  overflow: hidden;
+}
+#mission-screen.theme-mark .mission-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 12% 20%, rgba(255,255,255,0.5) 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.4) 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 65% 15%, rgba(255,255,255,0.5) 0.5px, transparent 1px),
+    radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.3) 0.5px, transparent 1px),
+    radial-gradient(1.5px 1.5px at 30% 45%, rgba(140,180,255,0.6) 0.5px, transparent 1px),
+    radial-gradient(1.5px 1.5px at 75% 80%, rgba(140,180,255,0.5) 0.5px, transparent 1px);
+  pointer-events: none;
+}
+#mission-screen.theme-mark .mission-header::after {
+  content: '🪐';
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  font-size: 32px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+#mission-screen.theme-mark .section-label { color: #7aa3cc; }
+#mission-screen.theme-mark .mission-item {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #d0dae8;
+}
+#mission-screen.theme-mark .mission-item .check { border-color: rgba(255,255,255,0.2); }
+#mission-screen.theme-mark .mission-item.done {
+  background: rgba(106,159,216,0.12);
+  border-left: 3px solid #6a9fd8;
+}
+#mission-screen.theme-mark .mission-item.done .check {
+  background: #5a8fbe;
+  border-color: #5a8fbe;
+}
+#mission-screen.theme-mark .mission-item.done .title { color: rgba(255,255,255,0.35); }
+#mission-screen.theme-mark .progress-bar { background: #6a9fd8; }
+#mission-screen.theme-mark .history-table {
+  background: rgba(255,255,255,0.05);
+  color: #b0c0d4;
+}
+#mission-screen.theme-mark .history-table th { background: #2a3f5f; }
+#mission-screen.theme-mark .history-table tr:not(:last-child) td {
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+#mission-screen.theme-mark .done-mark { color: #6a9fd8 !important; }
+#mission-screen.theme-mark .miss-mark { color: rgba(255,255,255,0.12) !important; }
+#mission-screen.theme-mark .back-btn {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+}
+
+/* Chloe 테마: 애니 파스텔 */
+#mission-screen.theme-chloe { background: #2e2636; color: #e0d0e0; }
+#mission-screen.theme-chloe .mission-header {
+  background: linear-gradient(135deg, #4a3558, #5c3d6a);
+  position: relative;
+  overflow: hidden;
+}
+#mission-screen.theme-chloe .mission-header::before {
+  content: '✨ 🌙 ⭐';
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  font-size: 16px;
+  letter-spacing: 4px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+#mission-screen.theme-chloe .mission-header::after {
+  content: '🌸';
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  font-size: 28px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+#mission-screen.theme-chloe .section-label { color: #c49abf; }
+#mission-screen.theme-chloe .mission-item {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #e0d0e0;
+}
+#mission-screen.theme-chloe .mission-item .check { border-color: rgba(255,255,255,0.18); }
+#mission-screen.theme-chloe .mission-item.done {
+  background: rgba(176,122,171,0.12);
+  border-left: 3px solid #c49abf;
+}
+#mission-screen.theme-chloe .mission-item.done .check {
+  background: #b07aab;
+  border-color: #b07aab;
+}
+#mission-screen.theme-chloe .mission-item.done .title { color: rgba(255,255,255,0.35); }
+#mission-screen.theme-chloe .progress-bar { background: #c49abf; }
+#mission-screen.theme-chloe .history-table {
+  background: rgba(255,255,255,0.05);
+  color: #c8b8c8;
+}
+#mission-screen.theme-chloe .history-table th { background: #4a3558; }
+#mission-screen.theme-chloe .history-table tr:not(:last-child) td {
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+#mission-screen.theme-chloe .done-mark { color: #c49abf !important; }
+#mission-screen.theme-chloe .miss-mark { color: rgba(255,255,255,0.12) !important; }
+#mission-screen.theme-chloe .back-btn {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+}
+
+/* 헤더 */
+.mission-header {
+  color: #fff;
+  padding: 24px 20px 20px;
+}
+.mission-header-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
-.header h2 { font-size: 20px; }
-.header .date { color: #888; font-size: 14px; }
+.mission-header h1 { font-size: 22px; font-weight: 700; }
+.mission-header .date {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+}
 .back-btn {
-  background: none;
-  border: 1px solid #ccc;
+  background: rgba(255,255,255,0.2);
+  border: none;
   border-radius: 8px;
-  padding: 6px 12px;
+  padding: 7px 14px;
   font-size: 13px;
   cursor: pointer;
-  color: #666;
+  color: rgba(255,255,255,0.9);
 }
+.back-btn:active { background: rgba(255,255,255,0.3); }
 
-/* 완료율 */
+.progress-text {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 8px;
+}
+.progress-text strong { color: #fff; font-size: 18px; }
 .progress {
-  background: #e8e8ed;
-  border-radius: 12px;
-  height: 8px;
-  margin-bottom: 24px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  height: 6px;
   overflow: hidden;
 }
 .progress-bar {
   height: 100%;
-  background: #f0a030;
-  border-radius: 12px;
+  border-radius: 10px;
   transition: width 0.3s;
 }
-.progress-text {
-  text-align: center;
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 8px;
-}
 
-/* 미션 목록 */
+/* 본문 */
+.mission-body {
+  flex: 1;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
 .mission-list { list-style: none; margin-bottom: 32px; }
 .mission-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding: 16px;
-  background: #fff;
   border-radius: 12px;
   margin-bottom: 8px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s;
   user-select: none;
   -webkit-user-select: none;
+  border-left: 3px solid transparent;
 }
-.mission-item.done { background: #f0f8f0; }
 .mission-item .check {
   width: 28px;
   height: 28px;
@@ -113,30 +275,17 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 16px;
+  font-size: 15px;
   transition: all 0.15s;
-}
-.mission-item.done .check {
-  background: #4caf50;
-  border-color: #4caf50;
   color: #fff;
 }
-.mission-item .title { font-size: 16px; }
-.mission-item.done .title {
-  text-decoration: line-through;
-  color: #aaa;
-}
+.mission-item .title { font-size: 16px; font-weight: 500; }
+.mission-item.done .title { text-decoration: line-through; }
 
-/* 최근 7일 */
-.history h3 {
-  font-size: 16px;
-  margin-bottom: 12px;
-}
 .history-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  background: #fff;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -144,69 +293,106 @@ body {
   padding: 10px 6px;
   text-align: center;
 }
-.history-table th {
-  background: #1a1a2e;
-  color: #fff;
-  font-weight: 500;
+.history-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
 }
+.history-arrow {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+.history-arrow:hover { opacity: 0.8; }
+.history-arrow:disabled { opacity: 0.15; cursor: default; }
+#mission-screen.theme-mark .history-arrow { color: #7aa3cc; }
+#mission-screen.theme-chloe .history-arrow { color: #c49abf; }
+
+.history-table th { color: #fff; font-weight: 500; }
 .history-table tr:not(:last-child) td {
   border-bottom: 1px solid #f0f0f0;
 }
-.history-table .done-mark { color: #4caf50; font-weight: 700; }
-.history-table .miss-mark { color: #ddd; }
 </style>
 </head>
 <body>
 
-<!-- 자녀 선택 -->
 <div id="select-screen" class="screen active">
   <h1>누구의 미션?</h1>
-  <button class="child-btn" onclick="selectChild('child1')">Mark</button>
-  <button class="child-btn" onclick="selectChild('child2')">Chloe</button>
+  <button class="child-btn mark" onclick="selectChild('child1')">Mark</button>
+  <button class="child-btn chloe" onclick="selectChild('child2')">Chloe</button>
 </div>
 
-<!-- 미션 화면 -->
 <div id="mission-screen" class="screen">
-  <div class="header">
-    <div>
-      <h2 id="child-name"></h2>
-      <div class="date" id="today-date"></div>
+  <div class="mission-header">
+    <div class="mission-header-top">
+      <div>
+        <h1 id="child-name"></h1>
+        <div class="date" id="today-date"></div>
+      </div>
+      <button class="back-btn" onclick="goBack()">변경</button>
     </div>
-    <button class="back-btn" onclick="goBack()">변경</button>
+    <div>
+      <div class="progress-text" id="progress-text"></div>
+      <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    </div>
   </div>
-  <div class="progress-text" id="progress-text"></div>
-  <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
-  <ul class="mission-list" id="mission-list"></ul>
-  <div class="history">
-    <h3>최근 7일</h3>
+  <div class="mission-body">
+    <div class="section-label">오늘의 미션</div>
+    <ul class="mission-list" id="mission-list"></ul>
+    <div class="history-nav">
+      <button class="history-arrow" id="history-prev" onclick="moveWeek(-1)">◀</button>
+      <span class="section-label" id="history-label">최근 7일</span>
+      <button class="history-arrow" id="history-next" onclick="moveWeek(1)">▶</button>
+    </div>
     <table class="history-table" id="history-table"></table>
   </div>
 </div>
 
 <script>
-// ===== 미션 정의 (수정은 여기서) =====
-const MISSIONS = [
+const MISSIONS_MARK = [
   { id: 'math', title: '수학 문제 풀기' },
   { id: 'read', title: '독서 30분' },
 ];
 
-const CHILDREN = {
-  child1: 'Mark',
-  child2: 'Chloe',
+const MISSIONS_CHLOE = [
+  { id: 'dvd', title: 'DVD 1시간 (호두로 가능)' },
+  { id: 'math', title: '수학 문제집 1장' },
+  { id: 'magic-tree', title: '매직트리하우스 챕터 3개' },
+  { id: 'korean', title: '국어 독해 (내용 1개)' },
+  { id: 'read', title: '책 읽기' },
+  { id: 'multiply', title: '멀티플' },
+  { id: 'eng-grammar', title: '영어문법 (혼공쌤)' },
+];
+
+const MISSIONS_MAP = {
+  child1: MISSIONS_MARK,
+  child2: MISSIONS_CHLOE,
 };
-// =====================================
+
+const CHILDREN = {
+  child1: { name: 'Mark', theme: 'theme-mark' },
+  child2: { name: 'Chloe', theme: 'theme-chloe' },
+};
 
 let currentChild = null;
+var weekOffset = 0;
 
 function getToday() {
-  const d = new Date();
+  var d = new Date();
   return d.getFullYear() + '-' +
     String(d.getMonth() + 1).padStart(2, '0') + '-' +
     String(d.getDate()).padStart(2, '0');
 }
 
 function getDateLabel(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
+  var d = new Date(dateStr + 'T00:00:00');
   return (d.getMonth() + 1) + '/' + d.getDate();
 }
 
@@ -215,7 +401,7 @@ function storageKey(child, date) {
 }
 
 function loadChecked(child, date) {
-  const raw = localStorage.getItem(storageKey(child, date));
+  var raw = localStorage.getItem(storageKey(child, date));
   return raw ? JSON.parse(raw) : {};
 }
 
@@ -232,27 +418,29 @@ function selectChild(child) {
 function goBack() {
   currentChild = null;
   localStorage.removeItem('lastChild');
+  document.getElementById('mission-screen').className = 'screen';
   document.getElementById('select-screen').classList.add('active');
-  document.getElementById('mission-screen').classList.remove('active');
 }
 
 function showMissionScreen() {
   document.getElementById('select-screen').classList.remove('active');
-  document.getElementById('mission-screen').classList.add('active');
-  document.getElementById('child-name').textContent = CHILDREN[currentChild] + '의 미션';
+  var ms = document.getElementById('mission-screen');
+  ms.className = 'screen active ' + CHILDREN[currentChild].theme;
+  weekOffset = 0;
+  document.getElementById('child-name').textContent = CHILDREN[currentChild].name + '의 미션';
   document.getElementById('today-date').textContent = getToday();
   renderMissions();
   renderHistory();
 }
 
 function renderMissions() {
-  const today = getToday();
-  const checked = loadChecked(currentChild, today);
-  const list = document.getElementById('mission-list');
+  var today = getToday();
+  var checked = loadChecked(currentChild, today);
+  var list = document.getElementById('mission-list');
   list.innerHTML = '';
 
-  MISSIONS.forEach(function(m) {
-    const li = document.createElement('li');
+  MISSIONS_MAP[currentChild].forEach(function(m) {
+    var li = document.createElement('li');
     li.className = 'mission-item' + (checked[m.id] ? ' done' : '');
     li.innerHTML = '<div class="check">' + (checked[m.id] ? '&#10003;' : '') + '</div>' +
       '<span class="title">' + m.title + '</span>';
@@ -265,33 +453,39 @@ function renderMissions() {
     list.appendChild(li);
   });
 
-  const doneCount = MISSIONS.filter(function(m) { return checked[m.id]; }).length;
-  const total = MISSIONS.length;
-  document.getElementById('progress-text').textContent = doneCount + ' / ' + total + ' 완료';
+  var doneCount = MISSIONS_MAP[currentChild].filter(function(m) { return checked[m.id]; }).length;
+  var total = MISSIONS_MAP[currentChild].length;
+  document.getElementById('progress-text').innerHTML = '<strong>' + doneCount + ' / ' + total + '</strong> 완료';
   document.getElementById('progress-bar').style.width = (total > 0 ? (doneCount / total * 100) : 0) + '%';
 }
 
+function moveWeek(dir) {
+  weekOffset += dir;
+  if (weekOffset > 0) weekOffset = 0;
+  renderHistory();
+}
+
 function renderHistory() {
-  const table = document.getElementById('history-table');
-  const today = new Date();
-  const dates = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const ds = d.getFullYear() + '-' +
+  var table = document.getElementById('history-table');
+  var today = new Date();
+  var dates = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(today);
+    d.setDate(d.getDate() - i + (weekOffset * 7));
+    var ds = d.getFullYear() + '-' +
       String(d.getMonth() + 1).padStart(2, '0') + '-' +
       String(d.getDate()).padStart(2, '0');
     dates.push(ds);
   }
 
-  let html = '<thead><tr><th></th>';
+  var html = '<thead><tr><th></th>';
   dates.forEach(function(ds) { html += '<th>' + getDateLabel(ds) + '</th>'; });
   html += '</tr></thead><tbody>';
 
-  MISSIONS.forEach(function(m) {
+  MISSIONS_MAP[currentChild].forEach(function(m) {
     html += '<tr><td style="text-align:left;padding-left:12px;">' + m.title + '</td>';
     dates.forEach(function(ds) {
-      const checked = loadChecked(currentChild, ds);
+      var checked = loadChecked(currentChild, ds);
       html += '<td class="' + (checked[m.id] ? 'done-mark' : 'miss-mark') + '">' +
         (checked[m.id] ? '●' : '○') + '</td>';
     });
@@ -300,11 +494,18 @@ function renderHistory() {
 
   html += '</tbody>';
   table.innerHTML = html;
+
+  var label = document.getElementById('history-label');
+  if (weekOffset === 0) {
+    label.textContent = '최근 7일';
+  } else {
+    label.textContent = getDateLabel(dates[0]) + ' - ' + getDateLabel(dates[6]);
+  }
+  document.getElementById('history-next').disabled = (weekOffset >= 0);
 }
 
-// 초기화: 마지막 선택 자녀 복원
 (function() {
-  const last = localStorage.getItem('lastChild');
+  var last = localStorage.getItem('lastChild');
   if (last && CHILDREN[last]) {
     selectChild(last);
   }
